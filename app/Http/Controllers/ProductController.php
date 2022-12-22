@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Cart;
 use Illuminate\Http\Request;
@@ -116,6 +117,20 @@ class ProductController extends Controller
 
     }
 
+    public static function GetCartProducts()
+    {
+        $userId = session()->get('user')['id'];
+
+        $products = DB::table('cart')
+            ->join('products', 'cart.product_id', '=', 'products.id')
+            ->where('cart.user_id', $userId)
+            ->select('products.*', 'cart.id as cart_id')
+            ->get();
+
+        return $products;
+
+    }
+
     public function RemoveProductFromCart($id)
     {
         Cart::find($id)->forceDelete();
@@ -123,4 +138,53 @@ class ProductController extends Controller
         return redirect('/');
     }
 
+
+    public function PlaceOrder(Request $req)
+    {
+        // Prepare necessary details for new order
+        $cartItems = $this->GetCartProducts();
+        $productIds = "";
+        $userId = session()->get('user')['id'];
+        $status = "processed";
+        $paymentMethod = $req->payment;
+        $address = $req->address;
+        $amount = 0;
+
+        foreach($cartItems as $item)
+        {
+            $productIds = $productIds . $item->id . ',';
+            $amount += $item->price;
+        }
+
+        // Create new order and save to database
+        $newOrder = new Order;
+        $newOrder->products_ids = $productIds;
+        $newOrder->user_id = $userId;
+        $newOrder->status = $status;
+        $newOrder->payment_method = $paymentMethod;
+        $newOrder->address = $address;
+        $newOrder->amount = $amount;
+
+        $newOrder->save();
+
+        // Delete user's card from database
+        foreach($cartItems as $item)
+        {
+            Cart::find($item->cart_id)->forceDelete();
+        }
+
+        // Give success message to user
+
+        echo "Your order has been successfully placed!.<br/>";
+        echo '<a href = "/">Click Here</a> to go back.';
+
+        return $paymentMethod;
+    }
+
+    public function BuyNow(Request $req)
+    {
+        $this->AddToCart($req);
+
+        return view('products.order');
+    }
 }

@@ -12,6 +12,7 @@
 
                 <div class="mb-3">
                     <label for="username" class="form-label">Username *</label>
+                    <p>Minimum 6 characters</p>
                     <input type="text" class="form-control" id="username" name="username" required>
                 </div>
 
@@ -22,11 +23,13 @@
 
                 <div class="mb-3">
                   <label for="password" class="form-label">Password *</label>
+                  <p>Minimum 6 characters</p>
                   <input type="password" class="form-control" id="password" name="password" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Full Name *</label>
+                    <p>Minimum 3 characters</p>
                     <input type="text" class="form-control" id="name" name="name" required>
                 </div>
             

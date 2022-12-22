@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrdersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [ProductController::class, 'index']);
+Route::get('/', function () {
+    return view('home');
+});
 
 
 // ADMINISTRATOR FUNCTIONS
@@ -33,6 +36,21 @@ Route::get('/login', function () {
 });
 
 Route::post('/login', [UsersController::class, 'login']);
+
+Route::get('changepassword', function()
+{
+    return view('users.changepass');
+});
+
+Route::post('changepassword', [UsersController::class, 'ChangePassword']);
+
+Route::get('showorders', [OrdersController::class, 'showorders']);
+
+Route::post('finishorder', [OrdersController::class, 'MarkOrderAsFinished']);
+
+Route::post('deleteallorders', [OrdersController::class, 'DeleteAllOrders']);
+
+Route::post('deleteorder', [OrdersController::class, 'DeleteOrder']);
 
 //
 
@@ -62,11 +80,22 @@ Route::get('edit/{id}', [ProductController::class, 'EditProduct']);
 
 Route::get('delete-product/{id}', [ProductController::class, 'DeleteProduct']);
 
+
+// Cart routes
+Route::post('add-to-cart', [ProductController::class, 'AddToCart']);
+
+Route::post('buynow', [ProductController::class, 'BuyNow']);
+
+Route::post('edit/edit-product', [ProductController::class, 'ModifyProduct']);
+
 Route::get('showcart', [ProductController::class, 'CartList']);
 
 Route::get('cart-delete-item/{id}', [ProductController::class, 'RemoveProductFromCart']);
 
 
-Route::post('add-to-cart', [ProductController::class, 'AddToCart']);
+// Order routes
+Route::get('order', function () {
+    return view('products.order');
+});
 
-Route::post('edit/edit-product', [ProductController::class, 'ModifyProduct']);
+Route::post('placeorder', [ProductController::class, 'PlaceOrder']);

@@ -15,17 +15,20 @@ $cartProductsNo = ProductController::CartItems();
             <a class="nav-link" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/">Orders</a>
+            <a class="nav-link" href="index">Products</a>
           </li>
+
+          @if(session()->has('user') && session()->get('user')['username'] == "administrator")
+          
           <li class="nav-item">
             <a class="nav-link" href="createproduct">Create product</a>
           </li>
 
-
-
           <li class="nav-item">
-            <a class="nav-link" href="logout">Log out</a>
+            <a class="nav-link" href="showorders">Active Orders</a>
           </li>
+
+          @endif
 
         </ul>
         
@@ -36,6 +39,7 @@ $cartProductsNo = ProductController::CartItems();
               {{session()->get('user')['username']}}
             </a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="changepassword">Change password</a></li>
               <li><a class="dropdown-item" href="/logout">Log out</a></li>
             </ul>
           </div>

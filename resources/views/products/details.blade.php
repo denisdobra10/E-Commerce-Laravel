@@ -32,8 +32,14 @@
             </form>
         </div>
 
-        <div class="addtocart">
-            <a href="add-to-cart/{{$product['id']}}" class="btn btn-success mb-5">BUY NOW</a>
+        <div class="buynow">
+            <form action="/buynow" method="POST">
+                @csrf
+                
+                <input type="hidden" name="product_id" value="{{$product['id']}}" readonly>
+                <button type="submit" class="btn btn-success mb-5">BUY NOW </button>
+            </form>
+
         </div>
 
     </div>

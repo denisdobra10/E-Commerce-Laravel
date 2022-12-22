@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\Fluent\Concerns\Has;
 use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
@@ -25,7 +27,8 @@ class UsersController extends Controller
         }
         else
         {
-            return "wrong username or password";
+            echo "Wrong username or password!<br/>";
+            echo '<a href = "/login">Click Here</a> to go back.';
         }
     }
 
@@ -47,7 +50,50 @@ class UsersController extends Controller
         // Create user
         $user = User::create($formFields);
 
-        return "Account successfully created";
+        echo "Your account has been successfully created!<br/>";
+        echo '<a href = "/login">Click Here</a> to login.';
+    }
+
+
+    public function ChangePassword(Request $req)
+    {
+        
+        if(Hash::check($req->oldpass, session()->get('user')['password']))
+        {
+            if(Hash::check($req->newpass, session()->get('user')['password']))
+            {
+                echo "You can't change your password with the same password!<br/>";
+                echo '<a href = "changepassword">Click Here</a> to try again.';
+
+                return;
+            }
+
+            if($req->newpass == $req->repeatnewpass)
+            {
+                DB::update('UPDATE users SET password = ? WHERE id = ?', [Hash::make($req->newpass), session()->get('user')['id']]);
+
+                echo "Your password has been successfully changed!<br/>";
+                echo '<a href = "/">Click Here</a> to go back.';
+
+                return;
+            }
+            else
+            {
+                echo "You didn't type the same new password on password confirmation!<br/>";
+                echo '<a href = "changepassword">Click Here</a> to try again.';
+
+                return;
+            }
+        }
+        else
+        {
+            echo session()->get('user')['password'];
+            echo '<br>';
+            echo Hash::make($req->oldpass);
+            echo "INCORRECT OLD PASSWORD!<br/>";
+            echo '<a href = "changepassword">Click Here</a> to try again.';
+        }
+
     }
 
     public function logout()
